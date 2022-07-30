@@ -1,0 +1,9 @@
+GET https://logistics.boxin.ng 
+
+###
+
+POST http://localhost:5000/api/auth/login
+
+{
+    "name" : "gideon"
+}
