@@ -1,7 +1,11 @@
 const express = require("express");
 const app = express();
 const authRoutes = require("./routes/auth.route");
-const port = 3000;
+const database = require("./helpers/database");
+const cors = require("cors");
+require("dotenv").config(); //process.env.DB_HOST
+
+database.connectToDb(process.env.DB_URL);
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
@@ -12,4 +16,5 @@ app.all("*", (req, res) =>
     error: "Resource not found",
   })
 );
+
 module.exports = app;
