@@ -93,13 +93,15 @@ exports.logUserIn = async (req, res) => {
   }
 };
 
+exports.logUserOut = async (req, res) => {};
+
 exports.refreshAccessToken = async (req, res) => {
   try {
     const { refresh } = req.body;
     const id = jwt.verify(refresh, process.env.REFRESH_KEY);
     const user = await User.findOne({ _id: id });
     if (!user) {
-      return res.status(401).json({
+      return res.status(403).json({
         success: false,
         error: "Refresh token is invalid",
       });
@@ -116,7 +118,7 @@ exports.refreshAccessToken = async (req, res) => {
     });
   } catch (err) {
     reportError(err, "refreshAccessToken err");
-    return res.status(401).json({
+    return res.status(403).json({
       success: false,
       error: "",
     });
