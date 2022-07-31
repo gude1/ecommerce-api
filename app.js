@@ -3,7 +3,7 @@ const app = express();
 const authRoutes = require("./routes/auth.route");
 const database = require("./helpers/database");
 const cors = require("cors");
-require("dotenv").config(); //process.env.DB_HOST
+require("dotenv").config();
 
 database.connectToDb(process.env.DB_URL);
 
