@@ -66,15 +66,20 @@ exports.logUserIn = async (req, res) => {
         error: "Incorrect email or password",
       });
     }
-    const token = await jwt.sign({ user }, process.env.ACCESS_KEY, {
+
+    const access = await jwt.sign({ user }, process.env.ACCESS_KEY, {
+      expiresIn: "5m",
+    });
+
+    const refresh = await jwt.sign({ id: user._id }, process.env.REFRESH_KEY, {
       expiresIn: "24h",
     });
 
     return res.status(200).json({
       success: true,
       data: {
-        user,
-        token,
+        access,
+        refresh,
       },
     });
   } catch (err) {
@@ -84,6 +89,36 @@ exports.logUserIn = async (req, res) => {
       error:
         err?.message ||
         "Could not proccess your request at this time please try again",
+    });
+  }
+};
+
+exports.refreshAccessToken = async (req, res) => {
+  try {
+    const { refresh } = req.body;
+    const id = jwt.verify(refresh, process.env.REFRESH_KEY);
+    const user = await User.findOne({ _id: id });
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        error: "Refresh token is invalid",
+      });
+    }
+    const access = await jwt.sign({ user }, process.env.ACCESS_KEY, {
+      expiresIn: "5m",
+    });
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        access,
+      },
+    });
+  } catch (err) {
+    reportError(err, "refreshAccessToken err");
+    return res.status(401).json({
+      success: false,
+      error: "",
     });
   }
 };
