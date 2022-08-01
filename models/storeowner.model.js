@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const uniqueValidator = require("mongoose-unique-validator");
 
 // Declare the Schema of the Mongo model
-const userSchema = new mongoose.Schema({
+const storeOwnerSchema = new mongoose.Schema({
   name: {
     type: mongoose.SchemaTypes.String,
     required: true,
@@ -25,6 +25,6 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-userSchema.plugin(uniqueValidator);
+storeOwnerSchema.plugin(uniqueValidator);
 //Export the model
-module.exports = mongoose.model("User", userSchema);
+module.exports = mongoose.model("StoreOwner", storeOwnerSchema);

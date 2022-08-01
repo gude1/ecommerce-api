@@ -1,7 +1,8 @@
 const bcrypt = require("bcrypt");
-const User = require("../models/user.model");
+const StoreOwner = require("../models/storeowner.model");
 const jwt = require("jsonwebtoken");
 const { isEmpty, reportError } = require("../helpers/utlity");
+const { ACCESS_KEY, REFRESH_KEY } = process.env;
 require("dotenv").config();
 
 exports.registerUser = async (req, res) => {
@@ -34,7 +35,7 @@ exports.registerUser = async (req, res) => {
     }
 
     const hashedpassword = await bcrypt.hash(password, 10);
-    const user = await User.create({
+    const user = await StoreOwner.create({
       name: name,
       email: email,
       password: hashedpassword,
@@ -58,22 +59,31 @@ exports.registerUser = async (req, res) => {
 exports.logUserIn = async (req, res) => {
   try {
     const { email, password } = req.body;
-    const user = await User.findOne({ email });
-    const verify = bcrypt.compare(password, user?.password || "");
-    if (!user || !verify) {
+    const user = await StoreOwner.findOne({ email });
+    if (!user) {
       return res.status(400).send({
         success: false,
         error: "Incorrect email or password",
       });
     }
-
-    const access = await jwt.sign({ user }, process.env.ACCESS_KEY, {
+    const verify = bcrypt.compare(password, user?.password || "");
+    if (!verify) {
+      return res.status(400).send({
+        success: false,
+        error: "Incorrect email or password",
+      });
+    }
+    const access = await jwt.sign({ name: user.name }, ACCESS_KEY, {
       expiresIn: "5m",
     });
 
-    const refresh = await jwt.sign({ id: user._id }, process.env.REFRESH_KEY, {
-      expiresIn: "24h",
-    });
+    const refresh = await jwt.sign(
+      { id: user.password },
+      process.env.REFRESH_KEY,
+      {
+        expiresIn: "24h",
+      }
+    );
 
     return res.status(200).json({
       success: true,
@@ -98,15 +108,15 @@ exports.logUserOut = async (req, res) => {};
 exports.refreshAccessToken = async (req, res) => {
   try {
     const { refresh } = req.body;
-    const id = jwt.verify(refresh, process.env.REFRESH_KEY);
-    const user = await User.findOne({ _id: id });
+    const id = jwt.verify(refresh, REFRESH_KEY);
+    const user = await StoreOwner.findOne({ _id: User.castObject(id) });
     if (!user) {
       return res.status(403).json({
         success: false,
         error: "Refresh token is invalid",
       });
     }
-    const access = await jwt.sign({ user }, process.env.ACCESS_KEY, {
+    const access = await jwt.sign({ user }, ACCESS_KEY, {
       expiresIn: "5m",
     });
 
@@ -120,7 +130,7 @@ exports.refreshAccessToken = async (req, res) => {
     reportError(err, "refreshAccessToken err");
     return res.status(403).json({
       success: false,
-      error: "",
+      error: "Could not validate refresh token",
     });
   }
 };
