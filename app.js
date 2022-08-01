@@ -4,8 +4,8 @@ const authRoutes = require("./routes/auth.route");
 const storeOwnerRoutes = require("./routes/storeowner.route");
 const database = require("./helpers/database");
 const cors = require("cors");
-const { DB_URL } = process.env;
 require("dotenv").config();
+const { DB_URL } = process.env;
 
 database.connectToDb(DB_URL);
 

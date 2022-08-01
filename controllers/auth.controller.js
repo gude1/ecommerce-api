@@ -2,8 +2,8 @@ const bcrypt = require("bcrypt");
 const StoreOwner = require("../models/storeowner.model");
 const jwt = require("jsonwebtoken");
 const { isEmpty, reportError } = require("../helpers/utlity");
-const { ACCESS_KEY, REFRESH_KEY } = process.env;
 require("dotenv").config();
+const { ACCESS_KEY, REFRESH_KEY } = process.env;
 
 exports.registerUser = async (req, res) => {
   try {
@@ -35,7 +35,7 @@ exports.registerUser = async (req, res) => {
     }
 
     const hashedpassword = await bcrypt.hash(password, 10);
-    const user = await StoreOwner.create({
+    await StoreOwner.create({
       name: name,
       email: email,
       password: hashedpassword,
@@ -47,11 +47,9 @@ exports.registerUser = async (req, res) => {
     });
   } catch (err) {
     reportError(err, "registerUser err");
-    return res.status(err?.response?.status || 500).json({
+    return res.status(500).json({
       success: false,
-      error:
-        err?.message ||
-        "Could not proccess your request at this time please try again",
+      error: "Could not proccess your request at this time please try again",
     });
   }
 };
@@ -59,26 +57,35 @@ exports.registerUser = async (req, res) => {
 exports.logUserIn = async (req, res) => {
   try {
     const { email, password } = req.body;
-    const user = await StoreOwner.findOne({ email });
-    if (!user) {
+    const storeowner = await StoreOwner.findOne({ email });
+    if (!storeowner) {
       return res.status(400).send({
         success: false,
         error: "Incorrect email or password",
       });
     }
-    const verify = bcrypt.compare(password, user?.password || "");
+    const verify = bcrypt.compare(password, storeowner?.password || "");
     if (!verify) {
       return res.status(400).send({
         success: false,
         error: "Incorrect email or password",
       });
     }
-    const access = await jwt.sign({ name: user.name }, ACCESS_KEY, {
-      expiresIn: "5m",
-    });
+    const access = await jwt.sign(
+      {
+        name: storeowner.name,
+        email: storeowner?.email,
+        _id: storeowner?._id,
+        image: storeowner?.image,
+      },
+      ACCESS_KEY,
+      {
+        expiresIn: "5m",
+      }
+    );
 
     const refresh = await jwt.sign(
-      { id: user.password },
+      { _id: storeowner?._id },
       process.env.REFRESH_KEY,
       {
         expiresIn: "24h",
@@ -93,12 +100,11 @@ exports.logUserIn = async (req, res) => {
       },
     });
   } catch (err) {
+    console.warn("access_key", ACCESS_KEY);
     reportError(err, "logUserIn err");
-    return res.status(err?.response?.status || 500).json({
+    return res.status(500).json({
       success: false,
-      error:
-        err?.message ||
-        "Could not proccess your request at this time please try again",
+      error: "Could not proccess your request at this time please try again",
     });
   }
 };
@@ -108,17 +114,26 @@ exports.logUserOut = async (req, res) => {};
 exports.refreshAccessToken = async (req, res) => {
   try {
     const { refresh } = req.body;
-    const id = jwt.verify(refresh, REFRESH_KEY);
-    const user = await StoreOwner.findOne({ _id: User.castObject(id) });
-    if (!user) {
+    const _id = jwt.verify(refresh, REFRESH_KEY);
+    const storeowner = await StoreOwner.findOne({ _id });
+    if (!storeowner) {
       return res.status(403).json({
         success: false,
         error: "Refresh token is invalid",
       });
     }
-    const access = await jwt.sign({ user }, ACCESS_KEY, {
-      expiresIn: "5m",
-    });
+    const access = await jwt.sign(
+      {
+        name: storeowner.name,
+        email: storeowner?.email,
+        _id: storeowner?._id,
+        image: storeowner?.image,
+      },
+      ACCESS_KEY,
+      {
+        expiresIn: "5m",
+      }
+    );
 
     return res.status(200).json({
       success: true,

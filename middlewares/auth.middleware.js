@@ -6,14 +6,14 @@ require("dotenv").config();
 exports.verifyToken = async (req, res, next) => {
   try {
     const token = req.headers.authorization.split(" ")[1];
-    const StoreOwner = jwt.verify(token, process.env.ACCESS_KEY);
-    if (!StoreOwner) {
+    const storeowner = jwt.verify(token, process.env.ACCESS_KEY);
+    if (!storeowner) {
       return res.status(401).json({
         success: false,
         error: "Authenticatication failed",
       });
     }
-    req.storeowner = await StoreOwner.findOne({ _id: user._id });
+    req.storeowner = await StoreOwner.findOne({ _id: storeowner._id });
     next();
   } catch (err) {
     reportError(err, "verifyToken err");
