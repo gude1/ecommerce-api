@@ -1,9 +1,8 @@
 const mongoose = require("mongoose");
-const uniqueValidator = require("mongoose-unique-validator");
 const crypto = require("crypto");
 
 // Declare the Schema of the Mongo model
-const storeOwnerSchema = new mongoose.Schema(
+const productSchema = new mongoose.Schema(
   {
     _id: {
       type: mongoose.Schema.Types.String,
@@ -12,40 +11,40 @@ const storeOwnerSchema = new mongoose.Schema(
     name: {
       type: mongoose.Schema.Types.String,
       required: true,
-      minLength: 6,
-      maxLength: 20,
+      minLength: 3,
       index: true,
     },
-    email: {
+    description: {
       type: mongoose.Schema.Types.String,
-      minLength: 8,
-      required: true,
-      lowercase: true,
-      unique: true,
+      default: "",
     },
     image: {
       type: mongoose.Schema.Types.String,
       unique: true,
       default: null,
     },
-    password: {
+    catergory_id: {
       type: mongoose.Schema.Types.String,
-      minLength: 6,
+      ref: "ProductCat",
+      required: true,
+    },
+    price: {
+      type: mongoose.Schema.Types.Number,
+      min: 10,
+      required: true,
+    },
+    hidden: {
+      type: mongoose.Schema.Types.Boolean,
+      default: false,
+    },
+    creator_id: {
+      type: mongoose.Schema.Types.String,
+      ref: "StoreOwner",
       required: true,
     },
   },
   { timestamps: true }
 );
 
-storeOwnerSchema.methods.getPartialInfo = function () {
-  return {
-    _id: this._id,
-    name: this.name,
-    email: this.email,
-    image: this.image,
-  };
-};
-
-storeOwnerSchema.plugin(uniqueValidator);
 //Export the model
-module.exports = mongoose.model("StoreOwner", storeOwnerSchema);
+module.exports = mongoose.model("Product", productSchema);

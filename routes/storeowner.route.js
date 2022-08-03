@@ -1,5 +1,8 @@
 const express = require("express");
+const app = express();
+const router = express.Router();
 const multer = require("multer");
+const upload = multer({ dest: "uploads/" });
 const {
   getStoreOwner,
   getAllStoreOwners,
@@ -7,9 +10,6 @@ const {
 } = require("../controllers/storeowner.controller");
 const { verifyToken } = require("../middlewares/auth.middleware");
 const profileimgMulter = require("../middlewares/profileimg.multer-config");
-const app = express();
-const router = express.Router();
-const upload = multer({ dest: "uploads/" });
 
 router.use(verifyToken);
 router.get("/", getStoreOwner);
