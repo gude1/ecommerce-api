@@ -131,7 +131,7 @@ exports.refreshAccessToken = async (req, res) => {
       },
       ACCESS_KEY,
       {
-        expiresIn: "5m",
+        expiresIn: "40m",
       }
     );
 

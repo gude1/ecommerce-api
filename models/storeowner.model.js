@@ -36,6 +36,15 @@ const storeOwnerSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+storeOwnerSchema.methods.getPartialInfo = function () {
+  return {
+    _id: this._id,
+    name: this.name,
+    email: this.email,
+    image: this.image,
+  };
+};
+
 storeOwnerSchema.plugin(uniqueValidator);
 //Export the model
 module.exports = mongoose.model("StoreOwner", storeOwnerSchema);
