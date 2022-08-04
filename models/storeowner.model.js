@@ -25,7 +25,7 @@ const storeOwnerSchema = new mongoose.Schema(
     },
     image: {
       type: mongoose.Schema.Types.String,
-      unique: true,
+      default: null,
     },
     password: {
       type: mongoose.Schema.Types.String,

@@ -20,7 +20,6 @@ const productSchema = new mongoose.Schema(
     },
     image: {
       type: mongoose.Schema.Types.String,
-      unique: true,
       default: null,
     },
     catergory_id: {

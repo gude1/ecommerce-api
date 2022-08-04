@@ -20,7 +20,7 @@ const storeSchema = new mongoose.Schema(
     },
     logo: {
       type: mongoose.Schema.Types.String,
-      unique: true,
+      default: null,
     },
     storeownerid: {
       type: mongoose.Schema.Types.String,
