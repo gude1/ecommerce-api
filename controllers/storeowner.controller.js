@@ -41,7 +41,6 @@ exports.getAllStoreOwners = async (req, res) => {
 exports.updateStoreOwner = async (req, res) => {
   try {
     const { name } = req.body;
-    const { filename } = req.file;
     const storeowner = await StoreOwner.findOne({ _id: req.storeowner._id });
     if (!storeowner) {
       return res.status(400).json({
@@ -50,7 +49,7 @@ exports.updateStoreOwner = async (req, res) => {
       });
     }
     storeowner.name = name || storeowner.name;
-    storeowner.image = filename || storeowner.image;
+    storeowner.image = req?.file?.filename || storeowner.image;
     await storeowner.save();
 
     return res.status(200).json({

@@ -17,12 +17,10 @@ const storeSchema = new mongoose.Schema(
     description: {
       type: mongoose.Schema.Types.String,
       minLength: 3,
-      default: "",
     },
     logo: {
       type: mongoose.Schema.Types.String,
       unique: true,
-      default: null,
     },
     storeownerid: {
       type: mongoose.Schema.Types.String,

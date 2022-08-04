@@ -1,8 +1,5 @@
 const express = require("express");
-const app = express();
 const router = express.Router();
-const multer = require("multer");
-const upload = multer({ dest: "uploads/" });
 const {
   getStoreOwner,
   getAllStoreOwners,
