@@ -19,7 +19,7 @@ function checkData(data) {
  *
  * @param {*} err error object
  * @param {*} name name attributed to the error
- * @returns
+ * @returns null
  */
 const reportError = async (err = {}, name = "reportError") => {
   if (!isEmpty(err)) {

@@ -1,5 +1,6 @@
 const { reportError } = require("../helpers/utlity");
 const ProductCat = require("../models/productcat.model");
+const Store = require("../models/store.model");
 
 exports.createProductCat = async (req, res) => {
   try {
@@ -13,9 +14,17 @@ exports.createProductCat = async (req, res) => {
           "Product category name is required and must be atleast  3 characters long",
       });
     }
+    const store = await Store.findOne({ creator_id: _id });
+    if (!store) {
+      return res.status(400).json({
+        success: false,
+        error: "You need to have a store to create a product category",
+      });
+    }
     const productcat = await ProductCat.create({
       name,
       creator_id: _id,
+      store_id: store._id,
     });
 
     return res.status(200).json({
@@ -136,7 +145,7 @@ exports.getStoreOwnerProductCats = async (req, res) => {
 
     const productcats = await ProductCat.find({
       creator_id: _id,
-    });
+    }).sort({ name: 1 });
 
     return res.status(200).json({
       success: true,

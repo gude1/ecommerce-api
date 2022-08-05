@@ -1,17 +1,16 @@
 const express = require("express");
-const app = express();
 const router = express.Router();
+const {
+  createProduct,
+  getProduct,
+  updateProduct,
+} = require("../controllers/product.controller");
 const { verifyToken } = require("../middlewares/auth.middleware");
+const productimgMulterConfig = require("../middlewares/productimg.multer-config");
 
 router.use(verifyToken);
-router
-  .route("/")
-  .get((req, res) => res.sendStatus(200))
-  .post((req, res) => res.sendStatus(200));
+router.route("/").post(productimgMulterConfig, createProduct);
 
-router
-  .route("/:productId")
-  .get((req, res) => res.sendStatus(200))
-  .patch((req, res) => res.sendStatus(200));
+router.route("/:productId").get(getProduct).patch(updateProduct);
 
 module.exports = router;

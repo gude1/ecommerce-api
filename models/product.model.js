@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 const crypto = require("crypto");
+const { PRODUCT_IMGS_PATH } = require("../constant");
+require("dotenv").config();
 
 // Declare the Schema of the Mongo model
 const productSchema = new mongoose.Schema(
@@ -21,15 +23,21 @@ const productSchema = new mongoose.Schema(
     image: {
       type: mongoose.Schema.Types.String,
       default: null,
+      get: (data) => {
+        if (!data) {
+          return null;
+        }
+        return `${process.env.SERVER_HOST}/${PRODUCT_IMGS_PATH}/${data}`;
+      },
     },
-    catergory_id: {
+    category_id: {
       type: mongoose.Schema.Types.String,
       ref: "ProductCat",
       required: true,
     },
     price: {
       type: mongoose.Schema.Types.Number,
-      min: 10,
+      min: 1,
       required: true,
     },
     hidden: {
@@ -39,6 +47,11 @@ const productSchema = new mongoose.Schema(
     creator_id: {
       type: mongoose.Schema.Types.String,
       ref: "StoreOwner",
+      required: true,
+    },
+    store_id: {
+      type: mongoose.Schema.Types.String,
+      ref: "Store",
       required: true,
     },
   },

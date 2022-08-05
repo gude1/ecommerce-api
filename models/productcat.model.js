@@ -14,6 +14,11 @@ const productCatSchema = new mongoose.Schema(
       minLength: 3,
       index: true,
     },
+    store_id: {
+      type: mongoose.Schema.Types.String,
+      ref: "Store",
+      required: true,
+    },
     creator_id: {
       type: mongoose.Schema.Types.String,
       ref: "StoreOwner",

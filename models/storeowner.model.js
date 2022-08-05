@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
 const uniqueValidator = require("mongoose-unique-validator");
 const crypto = require("crypto");
+const { STORE_OWNER_IMGS_PATH } = require("../constant");
+require("dotenv").config();
 
 // Declare the Schema of the Mongo model
 const storeOwnerSchema = new mongoose.Schema(
@@ -26,6 +28,12 @@ const storeOwnerSchema = new mongoose.Schema(
     image: {
       type: mongoose.Schema.Types.String,
       default: null,
+      get: (data) => {
+        if (!data) {
+          return null;
+        }
+        return `${process.env.SERVER_HOST}/${STORE_OWNER_IMGS_PATH}/${data}`;
+      },
     },
     password: {
       type: mongoose.Schema.Types.String,

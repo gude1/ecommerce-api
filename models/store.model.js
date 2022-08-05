@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 const crypto = require("crypto");
+const { STORE_IMGS_PATH } = require("../constant");
+require("dotenv").config();
 
 // Declare the Schema of the Mongo model
 const storeSchema = new mongoose.Schema(
@@ -21,6 +23,12 @@ const storeSchema = new mongoose.Schema(
     logo: {
       type: mongoose.Schema.Types.String,
       default: null,
+      get: (data) => {
+        if (!data) {
+          return null;
+        }
+        return `${process.env.SERVER_HOST}/${STORE_IMGS_PATH}/${data}`;
+      },
     },
     storeownerid: {
       type: mongoose.Schema.Types.String,
@@ -32,4 +40,4 @@ const storeSchema = new mongoose.Schema(
 );
 
 //Export the model
-module.exports = mongoose.model("Store ", storeSchema);
+module.exports = mongoose.model("Store", storeSchema);

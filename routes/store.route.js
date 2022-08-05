@@ -1,4 +1,5 @@
 const express = require("express");
+const { getAStoresProduct } = require("../controllers/product.controller");
 const router = express.Router();
 const {
   createOrUpdateStore,
@@ -13,5 +14,7 @@ router
   .route("/:storeId")
   .get(fetchAStore)
   .patch(storeimgMulterConfig, createOrUpdateStore);
+
+router.get("/:storeId/products", getAStoresProduct);
 
 module.exports = router;
