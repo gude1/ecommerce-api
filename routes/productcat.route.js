@@ -1,14 +1,21 @@
 const express = require("express");
-const app = express();
+const {
+  updateProductCat,
+  deleteProductCat,
+  getProductCat,
+  createProductCat,
+  getStoreOwnerProductCats,
+} = require("../controllers/productcat.controller");
 const router = express.Router();
 const { verifyToken } = require("../middlewares/auth.middleware");
 
 router.use(verifyToken);
-router
-  .route("/")
-  .get((req, res) => res.sendStatus(200))
-  .post((req, res) => res.sendStatus(200));
 
-router.patch("/:id", (req, res) => res.sendStatus(200));
+router.route("/").get(getStoreOwnerProductCats).post(createProductCat);
+router
+  .route("/:productCatId")
+  .get(getProductCat)
+  .patch(updateProductCat)
+  .delete(deleteProductCat);
 
 module.exports = router;

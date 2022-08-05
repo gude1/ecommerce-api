@@ -5,14 +5,11 @@ const config = {
   //   useCreateIndex: true,
 };
 
-exports.connectToDb = (url) => {
-  mongoose
-    .connect(url, config)
-    .then(function () {
-      console.log("DB connected Successfully");
-      //console.clear();
-    })
-    .catch(function (error) {
-      console.log("Error Connected " + error);
-    });
+exports.connectToDb = async (url) => {
+  try {
+    await mongoose.connect(url, config);
+    console.log("database connected");
+  } catch (err) {
+    throw new Error(`database connection failed` + err);
+  }
 };
