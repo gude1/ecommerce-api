@@ -132,7 +132,6 @@ exports.getProductCat = async (req, res) => {
 
 exports.getStoreOwnerProductCats = async (req, res) => {
   try {
-    const { productCatId } = req.params;
     const { _id } = req.storeowner;
 
     const productcats = await ProductCat.find({
