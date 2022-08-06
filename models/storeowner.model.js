@@ -41,7 +41,11 @@ const storeOwnerSchema = new mongoose.Schema(
       required: true,
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    toJSON: { virtuals: true, getters: true },
+    toObject: { virtuals: true, getters: true },
+  }
 );
 
 storeOwnerSchema.methods.getPartialInfo = function () {

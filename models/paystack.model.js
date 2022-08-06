@@ -2,26 +2,33 @@ const mongoose = require("mongoose");
 const crypto = require("crypto");
 
 // Declare the Schema of the Mongo model
-const productCatSchema = new mongoose.Schema(
+const paystackSchema = new mongoose.Schema(
   {
     _id: {
       type: mongoose.Schema.Types.String,
       default: () => crypto.randomBytes(32).toString("hex"),
     },
-    name: {
+    public_key: {
       type: mongoose.Schema.Types.String,
       required: true,
-      minLength: 3,
-      index: true,
+      minLength: 8,
+    },
+    secret_key: {
+      type: mongoose.Schema.Types.String,
+      required: true,
+      minLength: 8,
+    },
+    test: {
+      type: mongoose.Schema.Types.Boolean,
+      required: true,
+      default: true,
     },
     store_id: {
       type: mongoose.Schema.Types.String,
-      ref: "Store",
       required: true,
     },
     creator_id: {
       type: mongoose.Schema.Types.String,
-      ref: "StoreOwner",
       required: true,
     },
   },
@@ -33,4 +40,4 @@ const productCatSchema = new mongoose.Schema(
 );
 
 //Export the model
-module.exports = mongoose.model("ProductCat", productCatSchema);
+module.exports = mongoose.model("Paystack", paystackSchema);

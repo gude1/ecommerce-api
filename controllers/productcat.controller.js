@@ -92,10 +92,17 @@ exports.deleteProductCat = async (req, res) => {
     const { productCatId } = req.params;
     const { _id } = req.storeowner;
 
-    await ProductCat.deleteOne({
+    const deleted = await ProductCat.deleteOne({
       _id: productCatId,
       creator_id: _id,
     });
+
+    if (deleted.deletedCount < 1) {
+      return res.status(400).json({
+        success: false,
+        error: "Failed to delete",
+      });
+    }
 
     return res.status(200).json({
       success: true,

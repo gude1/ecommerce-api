@@ -20,10 +20,11 @@ const storeSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.String,
       minLength: 3,
     },
+
     logo: {
       type: mongoose.Schema.Types.String,
       default: null,
-      get: (data) => {
+      get: function (data) {
         if (!data) {
           return null;
         }
@@ -36,7 +37,11 @@ const storeSchema = new mongoose.Schema(
       required: true,
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    toJSON: { virtuals: true, getters: true },
+    toObject: { virtuals: true, getters: true },
+  }
 );
 
 //Export the model

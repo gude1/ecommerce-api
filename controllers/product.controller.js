@@ -53,10 +53,7 @@ exports.createProduct = async (req, res) => {
       store_id: store._id,
     });
 
-    await product.populate([
-      { path: "category_id", select: "name _id" },
-      { path: "store_id", select: "name _id" },
-    ]);
+    await product.populate([{ path: "category", select: "name" }]);
 
     return res.status(200).json({
       success: true,
@@ -76,7 +73,7 @@ exports.createProduct = async (req, res) => {
 exports.updateProduct = async (req, res) => {
   try {
     const { productId } = req.params;
-    const { name, description, price } = req.body;
+    const { name, description, price, hidden } = req.body;
     let errs = {};
 
     const product = await Product.findOne({ _id: productId });
@@ -91,12 +88,10 @@ exports.updateProduct = async (req, res) => {
     product.price = price || product.price;
     product.image = req?.file?.filename || product.image;
     product.description = description || product.description;
+    product.hidden = hidden || product.hidden;
 
     await product.save();
-    await product.populate([
-      { path: "category_id", select: "name _id" },
-      { path: "store_id", select: "name _id" },
-    ]);
+    await product.populate([{ path: "category", select: "name" }]);
 
     return res.status(200).json({
       success: true,
@@ -121,10 +116,7 @@ exports.getAStoresProduct = async (req, res) => {
       store_id: storeId,
     })
       .sort({ createdAt: -1 })
-      .populate([
-        { path: "category_id", select: "name _id" },
-        { path: "store_id", select: "name _id" },
-      ]);
+      .populate([{ path: "category", select: "name" }]);
 
     return res.status(200).json({
       success: true,
@@ -147,10 +139,14 @@ exports.getProduct = async (req, res) => {
 
     const product = await Product.findOne({
       _id: productId,
-    }).populate([
-      { path: "category_id", select: "name _id" },
-      { path: "store_id", select: "name _id logo" },
-    ]);
+    }).populate([{ path: "category", select: "name" }]);
+
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        error: `Product with id ${productId} not found`,
+      });
+    }
 
     return res.status(200).json({
       success: true,
@@ -160,6 +156,35 @@ exports.getProduct = async (req, res) => {
     });
   } catch (err) {
     reportError(err, "getProduct err");
+    return res.status(500).json({
+      success: false,
+      error: "Could not process your request at this time please try again",
+    });
+  }
+};
+
+exports.deleteProduct = async (req, res) => {
+  try {
+    const { productId } = req.params;
+    const { _id } = req.storeowner;
+
+    const deleted = await Product.deleteOne({
+      creator_id: _id,
+      _id: productId,
+    });
+
+    if (deleted.deletedCount < 1) {
+      return res.status(400).json({
+        success: false,
+        error: "Failed to delete",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+    });
+  } catch (err) {
+    reportError(err, "deleteProduct err");
     return res.status(500).json({
       success: false,
       error: "Could not process your request at this time please try again",

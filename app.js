@@ -5,9 +5,9 @@ const storeRoutes = require("./routes/store.route");
 const storeOwnerRoutes = require("./routes/storeowner.route");
 const productcatRoutes = require("./routes/productcat.route");
 const productRoutes = require("./routes/product.route");
+const paystackRoutes = require("./routes/paystack.route");
 const database = require("./helpers/database");
 const cors = require("cors");
-const { testUpdateStoreOwner } = require("./tests");
 require("dotenv").config();
 const { DB_URL } = process.env;
 
@@ -22,13 +22,12 @@ app.use("/api/storeowner", storeOwnerRoutes);
 app.use("/api/store", storeRoutes);
 app.use("/api/productcat", productcatRoutes);
 app.use("/api/product", productRoutes);
+app.use("/api/payment", paystackRoutes);
 app.all("*", (req, res) =>
   res.status(404).json({
     success: false,
     error: "Resource not found",
   })
 );
-
-console.log(process.env.SERVER_URL);
 
 module.exports = app;
