@@ -111,10 +111,16 @@ exports.updateProduct = async (req, res) => {
 exports.getAStoresProduct = async (req, res) => {
   try {
     const { storeId } = req.params;
-
-    const products = await Product.find({
+    const { cat } = req.query;
+    let searchparam = {
       store_id: storeId,
-    })
+    };
+
+    if (!isEmpty(cat)) {
+      searchparam = { ...searchparam, category_id: cat };
+    }
+
+    const products = await Product.find(searchparam)
       .sort({ createdAt: -1 })
       .populate([{ path: "category", select: "name" }]);
 
