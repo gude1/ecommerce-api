@@ -29,4 +29,5 @@ app.all("*", (req, res) => {
     error: "Resource not found",
   });
 });
+
 module.exports = app;
