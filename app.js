@@ -23,11 +23,10 @@ app.use("/api/store", storeRoutes);
 app.use("/api/productcat", productcatRoutes);
 app.use("/api/product", productRoutes);
 app.use("/api/payment", paystackRoutes);
-app.all("*", (req, res) =>
+app.all("*", (req, res) => {
   res.status(404).json({
     success: false,
     error: "Resource not found",
-  })
-);
-
+  });
+});
 module.exports = app;
