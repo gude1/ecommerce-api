@@ -120,8 +120,6 @@ exports.getAStoresProduct = async (req, res) => {
       searchparam = { ...searchparam, category_id: cat };
     }
 
-    console.log(searchparam);
-
     const products = await Product.find(searchparam)
       .sort({ createdAt: -1 })
       .populate([{ path: "category", select: "name" }]);
