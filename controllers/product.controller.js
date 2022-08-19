@@ -111,7 +111,7 @@ exports.updateProduct = async (req, res) => {
 exports.getAStoresProduct = async (req, res) => {
   try {
     const { storeId } = req.params;
-    const { cat, page } = req.query;
+    const { cat, page, search } = req.query;
     let searchparam = {
       store_id: storeId,
     };
@@ -120,6 +120,13 @@ exports.getAStoresProduct = async (req, res) => {
       searchparam = {
         ...searchparam,
         category_id: cat,
+      };
+    }
+
+    if (!isEmpty(search)) {
+      searchparam = {
+        ...searchparam,
+        name: { $regex: `.*${search}.*` },
       };
     }
 
