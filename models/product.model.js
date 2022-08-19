@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const crypto = require("crypto");
+const mongoosePaginate = require("mongoose-paginate-v2");
 const { PRODUCT_IMGS_PATH } = require("../constant");
 require("dotenv").config();
 
@@ -58,6 +59,8 @@ const productSchema = new mongoose.Schema(
     toObject: { virtuals: true, getters: true },
   }
 );
+
+productSchema.plugin(mongoosePaginate);
 
 productSchema.virtual("store", {
   ref: "Store",

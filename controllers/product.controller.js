@@ -111,23 +111,33 @@ exports.updateProduct = async (req, res) => {
 exports.getAStoresProduct = async (req, res) => {
   try {
     const { storeId } = req.params;
-    const { cat } = req.query;
+    const { cat, page } = req.query;
     let searchparam = {
       store_id: storeId,
     };
 
     if (!isEmpty(cat)) {
-      searchparam = { ...searchparam, category_id: cat };
+      searchparam = {
+        ...searchparam,
+        category_id: cat,
+      };
     }
 
-    const products = await Product.find(searchparam)
-      .sort({ createdAt: -1 })
-      .populate([{ path: "category", select: "name" }]);
+    const products = await Product.paginate(searchparam, {
+      page: page || 1,
+      limit: 10,
+      sort: { createdAt: -1 },
+      populate: [{ path: "category", select: "name" }],
+    });
 
     return res.status(200).json({
       success: true,
       data: {
-        products,
+        products: products?.docs,
+        page: products?.page,
+        limit: products?.limit,
+        prevPage: products?.prevPage,
+        nextPage: products?.nextPage,
       },
     });
   } catch (err) {
