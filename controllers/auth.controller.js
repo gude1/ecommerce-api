@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
 const StoreOwner = require("../models/storeowner.model");
 const jwt = require("jsonwebtoken");
-const { isEmpty, reportError } = require("../helpers/utlity");
+const { isEmpty, reportError, validateEmail } = require("../helpers/utlity");
 require("dotenv").config();
 const { ACCESS_KEY, REFRESH_KEY } = process.env;
 
@@ -15,10 +15,10 @@ exports.registerUser = async (req, res) => {
         name: "Name is required and must be between 6-20 characters",
       };
     }
-    if (!email || email.length < 8) {
+    if (validateEmail(email)) {
       errs = {
         ...errs,
-        email: "Email is required and must be atleast 6 characters long",
+        email: "Invalid email format",
       };
     }
     if (!password || password.length < 6 || password.length > 11) {

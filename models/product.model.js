@@ -37,12 +37,22 @@ const productSchema = new mongoose.Schema(
     },
     price: {
       type: mongoose.Schema.Types.Number,
-      min: 1,
+      min: 100,
       required: true,
     },
     hidden: {
       type: mongoose.Schema.Types.Boolean,
       default: false,
+    },
+    in_stock: {
+      type: mongoose.Schema.Types.Number,
+      min: 0,
+      required: true,
+    },
+    delivery_schedule: {
+      type: mongoose.Schema.Types.String,
+      default: "1d",
+      required: true,
     },
     creator_id: {
       type: mongoose.Schema.Types.String,

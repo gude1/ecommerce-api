@@ -5,7 +5,7 @@ const Store = require("../models/store.model");
 exports.createProduct = async (req, res) => {
   try {
     const { _id } = req.storeowner;
-    const { name, description, category_id, price } = req.body;
+    const { name, description, category_id, price, stock, schedule } = req.body;
     let errs = {};
     if (!name || name.length < 3) {
       errs = {
@@ -19,10 +19,10 @@ exports.createProduct = async (req, res) => {
         category_id: "Category id is required",
       };
     }
-    if (!price || price < 1) {
+    if (!price || price < 100) {
       errs = {
         ...errs,
-        price: "Product price is required and cannot be less than 1",
+        price: "Product price is required and cannot be less than 100",
       };
     }
 
@@ -49,6 +49,8 @@ exports.createProduct = async (req, res) => {
       category_id,
       price,
       image: req?.file?.filename,
+      in_stock: stock || 0,
+      delivery_schedule: schedule || "1d",
       creator_id: _id,
       store_id: store._id,
     });
@@ -73,7 +75,7 @@ exports.createProduct = async (req, res) => {
 exports.updateProduct = async (req, res) => {
   try {
     const { productId } = req.params;
-    const { name, description, price, hidden } = req.body;
+    const { name, description, price, hidden, stock, schedule } = req.body;
     let errs = {};
 
     const product = await Product.findOne({ _id: productId });
@@ -89,6 +91,8 @@ exports.updateProduct = async (req, res) => {
     product.image = req?.file?.filename || product.image;
     product.description = description || product.description;
     product.hidden = hidden || product.hidden;
+    product.in_stock = stock || product.in_stock;
+    product.schedule = schedule || product.schedule;
 
     await product.save();
     await product.populate([{ path: "category", select: "name" }]);
