@@ -6,6 +6,7 @@ const storeOwnerRoutes = require("./routes/storeowner.route");
 const productcatRoutes = require("./routes/productcat.route");
 const productRoutes = require("./routes/product.route");
 const paystackRoutes = require("./routes/paystack.route");
+const orderRoutes = require("./routes/order.route");
 const database = require("./helpers/database");
 const cors = require("cors");
 require("dotenv").config();
@@ -23,6 +24,8 @@ app.use("/api/store", storeRoutes);
 app.use("/api/productcat", productcatRoutes);
 app.use("/api/product", productRoutes);
 app.use("/api/payment", paystackRoutes);
+app.use("/api/order", orderRoutes);
+
 app.all("*", (req, res) => {
   res.status(404).json({
     success: false,

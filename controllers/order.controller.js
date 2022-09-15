@@ -1,17 +1,17 @@
-const { reportError, isEmpty, validateEmail } = require("../helpers/utlity");
+const {
+  reportError,
+  isEmpty,
+  validateEmail,
+  returnDefaultErr,
+} = require("../helpers/utlity");
 const Order = require("../models/order.model");
+const Store = require("../models/store.model");
 
-exports.createAndUpdateOrder = async (req, res) => {
+exports.createAOrder = async (req, res) => {
   try {
-    const {
-      items,
-      amount_paid,
-      status,
-      store_id,
-      customer_name,
-      customer_email,
-    } = req;
-    const STATUSES = ["awaiting_payment", "pending", "dispatched", "delivered"];
+    const { items, amount_paid, store_id, customer_name, customer_email } =
+      req.body;
+    const STATUSES = ["pending", "dispatched", "delivered"];
     let input_errs = {};
 
     if (!Array.isArray(items) || items?.length < 1) {
@@ -25,13 +25,6 @@ exports.createAndUpdateOrder = async (req, res) => {
       input_errs = {
         ...input_errs,
         amount_paid: "Amount paid is required and cannot be less than 100",
-      };
-    }
-
-    if (!STATUSES.includes(status)) {
-      input_errs = {
-        ...input_errs,
-        status: `Status is required and must be one of ${STATUSES}`,
       };
     }
 
@@ -71,9 +64,190 @@ exports.createAndUpdateOrder = async (req, res) => {
       store_id,
       customer_email,
       customer_name,
-      status,
+    });
+
+    await order.populate([
+      {
+        path: "ordered_products",
+        populate: {
+          path: "category",
+          select: "name",
+        },
+      },
+    ]);
+
+    return res.status(201).json({
+      success: true,
+      data: {
+        order: {
+          store_id: order?.store_id,
+          customer_name: order?.customer_name,
+          customer_email: order?.customer_email,
+          amount_paid: order?.amount_paid,
+          status: order?.status,
+          paystack_ref: order?.paystack_ref,
+          _id: order?._id,
+          ordered_products: order?.ordered_products,
+        },
+      },
     });
   } catch (err) {
-    reportError(err, "createOrder");
+    reportError(err, "createAOrder");
+    returnDefaultErr(res);
+  }
+};
+
+exports.updateAOrder = async (req, res) => {
+  try {
+    const { status } = req.body;
+    const { _id } = req.storeowner;
+    const { orderId } = req.params;
+    const STATUSES = ["dispatched", "delivered"];
+    let errs = {};
+
+    if (!STATUSES.includes(status)) {
+      errs = {
+        ...errs,
+        status: `Status is required and must be one of ${STATUSES}`,
+      };
+    }
+
+    if (!isEmpty(errs)) {
+      return res.status(400).json({
+        success: false,
+        errors: {
+          ...errs,
+        },
+      });
+    }
+
+    let store = await Store.findOne({ storeownerid: _id });
+    order = await Order.findOne({ _id: orderId, store_id: store?._id });
+
+    if (isEmpty(order)) {
+      return res.status(404).json({
+        success: false,
+        error: "Order not found",
+      });
+    }
+
+    order.status = status;
+    await order.save();
+    await order.populate([
+      {
+        path: "ordered_products",
+        populate: {
+          path: "category",
+          select: "name",
+        },
+      },
+    ]);
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        order: {
+          store_id: order?.store_id,
+          customer_name: order?.customer_name,
+          customer_email: order?.customer_email,
+          amount_paid: order?.amount_paid,
+          status: order?.status,
+          paystack_ref: order?.paystack_ref,
+          _id: order?._id,
+          ordered_products: order?.ordered_products,
+        },
+      },
+    });
+  } catch (err) {
+    reportError(err, "updateAOrder");
+    returnDefaultErr(res);
+  }
+};
+
+exports.fetchAOrder = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    let order = await Order.findOne({ _id: orderId });
+
+    if (isEmpty(order)) {
+      return res.status(404).json({
+        success: false,
+        error: "Order not found",
+      });
+    }
+
+    await order.populate([
+      {
+        path: "ordered_products",
+        populate: {
+          path: "category",
+          select: "name",
+        },
+      },
+    ]);
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        order: {
+          store_id: order?.store_id,
+          customer_name: order?.customer_name,
+          customer_email: order?.customer_email,
+          amount_paid: order?.amount_paid,
+          status: order?.status,
+          paystack_ref: order?.paystack_ref,
+          _id: order?._id,
+          ordered_products: order?.ordered_products,
+        },
+      },
+    });
+  } catch (err) {
+    reportError(err, "updateAOrder");
+    returnDefaultErr(res);
+  }
+};
+
+exports.updateOrderPaymentStatus = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    let order = await Order.findOne({ _id: orderId });
+
+    if (isEmpty(order)) {
+      return res.status(404).json({
+        success: false,
+        error: "Order not found",
+      });
+    }
+
+    order.status = "pending";
+    await order.save();
+    await order.populate([
+      {
+        path: "ordered_products",
+        populate: {
+          path: "category",
+          select: "name",
+        },
+      },
+    ]);
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        order: {
+          store_id: order?.store_id,
+          customer_name: order?.customer_name,
+          customer_email: order?.customer_email,
+          amount_paid: order?.amount_paid,
+          status: order?.status,
+          paystack_ref: order?.paystack_ref,
+          _id: order?._id,
+          ordered_products: order?.ordered_products,
+        },
+      },
+    });
+  } catch (err) {
+    reportError(err, "updateAOrder");
+    returnDefaultErr(res);
   }
 };

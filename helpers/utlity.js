@@ -15,11 +15,9 @@ function checkData(data) {
 }
 
 function validateEmail(email) {
-  return String(email)
-    .toLowerCase()
-    .match(
-      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-    );
+  let mailformat =
+    /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/gi;
+  return String(email);
 }
 
 /**
@@ -29,7 +27,7 @@ function validateEmail(email) {
  * @param {*} name name attributed to the error
  * @returns null
  */
-const reportError = async (err = {}, name = "reportError") => {
+function reportError(err = {}, name = "reportError") {
   if (!isEmpty(err)) {
     console.error(name, {
       errmsg: String(err),
@@ -37,6 +35,17 @@ const reportError = async (err = {}, name = "reportError") => {
     });
     return;
   }
-};
+}
 
-module.exports = { isEmpty, reportError, validateEmail };
+function returnDefaultErr(res) {
+  if (isEmpty(res)) {
+    return;
+  }
+
+  return res.status(500).json({
+    success: false,
+    error: "Could not process your request at this time please try again",
+  });
+}
+
+module.exports = { isEmpty, reportError, validateEmail, returnDefaultErr };

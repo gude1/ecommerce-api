@@ -15,7 +15,7 @@ const orderSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.String,
       default: () => crypto.randomBytes(32).toString("hex"),
       required: true,
-      unique: true,
+      unique: true, 
     },
     items: {
       type: [mongoose.Schema.Types.String],
@@ -43,7 +43,7 @@ const orderSchema = new mongoose.Schema(
     },
     status: {
       type: mongoose.Schema.Types.String,
-      default: "pending",
+      default: "awaiting_payment",
     },
   },
   {
@@ -60,7 +60,7 @@ orderSchema.virtual("ordered_products", {
   ref: "Product",
   localField: "items",
   foreignField: "_id",
-  justOne: true,
+  // justOne: true,
 });
 
 orderSchema.virtual("store", {

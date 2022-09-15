@@ -15,7 +15,7 @@ exports.registerUser = async (req, res) => {
         name: "Name is required and must be between 6-20 characters",
       };
     }
-    if (validateEmail(email)) {
+    if (!validateEmail(email)) {
       errs = {
         ...errs,
         email: "Invalid email format",
