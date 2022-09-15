@@ -16,7 +16,6 @@ const storeOwnerSchema = new mongoose.Schema(
       required: true,
       minLength: 6,
       maxLength: 20,
-      index: true,
     },
     email: {
       type: mongoose.Schema.Types.String,
@@ -28,6 +27,7 @@ const storeOwnerSchema = new mongoose.Schema(
     image: {
       type: mongoose.Schema.Types.String,
       default: null,
+      required: false,
       get: (data) => {
         if (!data) {
           return null;

@@ -13,7 +13,6 @@ require("dotenv").config();
 const { DB_URL } = process.env;
 
 database.connectToDb(DB_URL);
-
 app.use(cors());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
