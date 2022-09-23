@@ -100,7 +100,6 @@ exports.logUserIn = async (req, res) => {
       },
     });
   } catch (err) {
-    console.warn("access_key", ACCESS_KEY);
     reportError(err, "logUserIn err");
     return res.status(500).json({
       success: false,
@@ -131,7 +130,7 @@ exports.refreshAccessToken = async (req, res) => {
       },
       ACCESS_KEY,
       {
-        expiresIn: "40m",
+        expiresIn: "5m",
       }
     );
 

@@ -17,7 +17,7 @@ function checkData(data) {
 function validateEmail(email) {
   let mailformat =
     /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/gi;
-  return String(email);
+  return  mailformat.test(String(email));
 }
 
 /**

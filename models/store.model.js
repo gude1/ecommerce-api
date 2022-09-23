@@ -14,13 +14,11 @@ const storeSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.String,
       required: true,
       minLength: 3,
-      index: true,
     },
     description: {
       type: mongoose.Schema.Types.String,
       minLength: 3,
     },
-
     logo: {
       type: mongoose.Schema.Types.String,
       default: null,
