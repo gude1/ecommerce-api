@@ -48,6 +48,21 @@ const storeOwnerSchema = new mongoose.Schema(
   }
 );
 
+storeOwnerSchema.virtual("store", {
+  ref: "Store",
+  localField: "_id",
+  foreignField: "storeownerid",
+  justOne: true,
+});
+
+storeOwnerSchema.virtual("store_count", {
+  ref: "Store",
+  localField: "_id",
+  foreignField: "storeownerid",
+  justOne: true,
+  count: true,
+});
+
 storeOwnerSchema.methods.getPartialInfo = function () {
   return {
     _id: this._id,

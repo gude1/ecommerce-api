@@ -71,12 +71,15 @@ exports.logUserIn = async (req, res) => {
         error: "Incorrect email or password",
       });
     }
+
+    await storeowner.populate("store_count");
     const access = await jwt.sign(
       {
         name: storeowner.name,
         email: storeowner?.email,
         _id: storeowner?._id,
         image: storeowner?.image,
+        has_store: storeowner?.store_count == 1 ? true : false,
       },
       ACCESS_KEY,
       {
@@ -121,12 +124,15 @@ exports.refreshAccessToken = async (req, res) => {
         error: "Refresh token is invalid",
       });
     }
+
+    await storeowner.populate("store_count");
     const access = await jwt.sign(
       {
         name: storeowner.name,
         email: storeowner?.email,
         _id: storeowner?._id,
         image: storeowner?.image,
+        has_store: storeowner?.store_count == 1 ? true : false,
       },
       ACCESS_KEY,
       {
