@@ -79,7 +79,7 @@ exports.logUserIn = async (req, res) => {
         email: storeowner?.email,
         _id: storeowner?._id,
         image: storeowner?.image,
-        has_store: storeowner?.store_count == 1 ? true : false,
+        has_store: storeowner?.store_count == 1 ? 1 : 0,
       },
       ACCESS_KEY,
       {
@@ -132,7 +132,7 @@ exports.refreshAccessToken = async (req, res) => {
         email: storeowner?.email,
         _id: storeowner?._id,
         image: storeowner?.image,
-        has_store: storeowner?.store_count == 1 ? true : false,
+        has_store: storeowner?.store_count == 1 ? 1 : 0,
       },
       ACCESS_KEY,
       {
