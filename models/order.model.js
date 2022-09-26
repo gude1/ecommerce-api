@@ -15,7 +15,7 @@ const orderSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.String,
       default: () => crypto.randomBytes(32).toString("hex"),
       required: true,
-      unique: true, 
+      unique: true,
     },
     items: {
       type: [mongoose.Schema.Types.String],
@@ -35,6 +35,11 @@ const orderSchema = new mongoose.Schema(
       minLength: 8,
       required: true,
       lowercase: true,
+    },
+    delivery_address: {
+      type: mongoose.Schema.Types.String,
+      minLength: 8,
+      required: true,
     },
     amount_paid: {
       type: mongoose.Schema.Types.Number,

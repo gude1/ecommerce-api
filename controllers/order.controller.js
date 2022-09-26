@@ -9,8 +9,14 @@ const Store = require("../models/store.model");
 
 exports.createAOrder = async (req, res) => {
   try {
-    const { items, amount_paid, store_id, customer_name, customer_email } =
-      req.body;
+    const {
+      items,
+      amount_paid,
+      store_id,
+      customer_name,
+      customer_email,
+      delivery_address,
+    } = req.body;
     const STATUSES = ["pending", "dispatched", "delivered"];
     let input_errs = {};
 
@@ -42,6 +48,13 @@ exports.createAOrder = async (req, res) => {
       };
     }
 
+    if (isEmpty(delivery_address) || delivery_address?.length < 8) {
+      input_errs = {
+        ...input_errs,
+        customer_name: `Delivery address is required and must be atleast 8 characters`,
+      };
+    }
+
     if (!validateEmail(customer_email)) {
       input_errs = {
         ...input_errs,
@@ -63,6 +76,7 @@ exports.createAOrder = async (req, res) => {
       amount_paid,
       store_id,
       customer_email,
+      delivery_address,
       customer_name,
     });
 
@@ -84,6 +98,7 @@ exports.createAOrder = async (req, res) => {
           customer_name: order?.customer_name,
           customer_email: order?.customer_email,
           amount_paid: order?.amount_paid,
+          delivery_address: delivery_address,
           status: order?.status,
           paystack_ref: order?.paystack_ref,
           _id: order?._id,
@@ -150,6 +165,7 @@ exports.updateAOrder = async (req, res) => {
           store_id: order?.store_id,
           customer_name: order?.customer_name,
           customer_email: order?.customer_email,
+          delivery_address: delivery_address,
           amount_paid: order?.amount_paid,
           status: order?.status,
           paystack_ref: order?.paystack_ref,
@@ -194,6 +210,7 @@ exports.fetchAOrder = async (req, res) => {
           customer_name: order?.customer_name,
           customer_email: order?.customer_email,
           amount_paid: order?.amount_paid,
+          delivery_address: delivery_address,
           status: order?.status,
           paystack_ref: order?.paystack_ref,
           _id: order?._id,
@@ -239,6 +256,7 @@ exports.updateOrderPaymentStatus = async (req, res) => {
           customer_name: order?.customer_name,
           customer_email: order?.customer_email,
           amount_paid: order?.amount_paid,
+          delivery_address: delivery_address,
           status: order?.status,
           paystack_ref: order?.paystack_ref,
           _id: order?._id,
